@@ -1,4 +1,4 @@
-# gps_tracker
+# Background or Foreground Service
 
 A new Flutter project.
 
