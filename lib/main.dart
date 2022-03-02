@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gps_tracker/location_service.dart';
+import 'package:gps_tracker/user_location.dart';
 
 void main() {
   runApp(MyApp());
@@ -31,10 +33,23 @@ class BackGroundService extends StatefulWidget {
 
 class BackGroundServiceState extends State<BackGroundService> {
   int START_SERVICE = 0;
+  LocationService locationService = LocationService();
+  double? latitude = 0;
+  double? longitude = 0;
+
   Future<void> startService() async {
     if (Platform.isAndroid) {
+      locationService.getlocationuser = true;
+      locationService.locationStream.listen((UserLocation) {
+        setState(() {
+          latitude = UserLocation.latitude;
+          longitude = UserLocation.longitude;
+        });
+      });
+
       var methodChannel = MethodChannel("com.example.messages");
       String data = await methodChannel.invokeMethod("startService");
+
       debugPrint(data);
     }
   }
@@ -43,8 +58,18 @@ class BackGroundServiceState extends State<BackGroundService> {
     if (Platform.isAndroid) {
       var methodChannel = MethodChannel("com.example.messages");
       String data = await methodChannel.invokeMethod("stopService");
+      locationService.getlocationuser = false;
+
+      dispose();
+
       debugPrint(data);
     }
+  }
+
+  @override
+  void dispose() {
+    locationService.dispose();
+    super.dispose();
   }
 
   @override
@@ -52,7 +77,7 @@ class BackGroundServiceState extends State<BackGroundService> {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        title: Text("Flutter Background Service"),
+        title: Text('${latitude}'),
         backgroundColor: Colors.green,
       ),
       body: Center(

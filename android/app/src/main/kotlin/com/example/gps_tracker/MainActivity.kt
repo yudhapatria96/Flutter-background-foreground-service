@@ -41,6 +41,7 @@ class MainActivity: FlutterActivity() {
         intent=Intent(this,AppService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             stopService(intent as Intent)
+            
         }else
         {
             stopService(intent as Intent)
